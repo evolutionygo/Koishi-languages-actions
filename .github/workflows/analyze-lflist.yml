@@ -25,7 +25,7 @@ jobs:
         echo "Total de carpetas:"
         ls -1 ygopro-database/locales | wc -l
 
-    # 3. Renombrar es-ES a Espanol KS (sustituyendo Ñ por n)
+    # 3. Renombrar es-ES a Español KS (sustituyendo Ñ por n)
     - name: Rename es-ES to Español KS
       run: mv ygopro-database/locales/es-ES ygopro-database/locales/"Español KS"
 
@@ -52,7 +52,7 @@ jobs:
     - name: Remove other language folders
       run: |
         cd ygopro-database/locales
-        find . -mindepth 1 -maxdepth 1 -type d -not -name "Espanol KS" -not -name "Ingles KS" -not -name "Español EDO" -exec rm -rf {} +
+        find . -mindepth 1 -maxdepth 1 -type d -not -name "Español KS" -not -name "Ingles KS" -not -name "Español EDO" -exec rm -rf {} +
 
     # 8. Log: Verificar las carpetas restantes
     - name: List remaining folders
