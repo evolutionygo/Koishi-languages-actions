@@ -1,0 +1,35 @@
+name: Rename and Upload Language Folders
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  rename-folders:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Rename es-ES to Español KS
+      run: mv es-ES "Español KS"
+
+    - name: Rename en-US to Ingles KS
+      run: mv en-US "Ingles KS"
+
+    - name: Remove other language folders
+      run: |
+        find . -type d -not -name "Español KS" -not -name "Ingles KS" -not -name ".git" -not -name ".github" -exec rm -rf {} +
+
+    - name: Push changes to external repository
+      run: |
+        git config --global user.name "your-username"
+        git config --global user.email "your-email"
+        git init
+        git remote add origin https://github.com/evolutionygo/koishi-languages
+        git add .
+        git commit -m "Upload renamed language folders"
+        git push -f origin main
