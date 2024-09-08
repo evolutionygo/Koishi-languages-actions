@@ -33,21 +33,28 @@ jobs:
     - name: Rename en-US to Ingles KS
       run: mv ygopro-database/locales/en-US ygopro-database/locales/"Ingles KS"
 
-    # 5. Log: Listar todas las carpetas después del renombrado
-    - name: List folders after renaming
+    # 5. Clonar el repositorio CDBEsp y copiar sus archivos a la nueva carpeta
+    - name: Clone CDBEsp repository and copy files
+      run: |
+        git clone https://github.com/ryoken08/CDBEsp.git
+        mkdir -p ygopro-database/locales/"Español EDO"
+        cp -r CDBEsp/* ygopro-database/locales/"Español EDO"
+
+    # 6. Log: Listar todas las carpetas después del renombrado y agregado de "Español EDO"
+    - name: List folders after renaming and adding Español EDO
       run: |
         echo "Cantidad de carpetas después de renombrar:"
         ls ygopro-database/locales
         echo "Total de carpetas:"
         ls -1 ygopro-database/locales | wc -l
 
-    # 6. Eliminar otras carpetas de idiomas
+    # 7. Eliminar otras carpetas de idiomas
     - name: Remove other language folders
       run: |
         cd ygopro-database/locales
-        find . -mindepth 1 -maxdepth 1 -type d -not -name "Espanol KS" -not -name "Ingles KS" -exec rm -rf {} +
+        find . -mindepth 1 -maxdepth 1 -type d -not -name "Espanol KS" -not -name "Ingles KS" -not -name "Español EDO" -exec rm -rf {} +
 
-    # 7. Log: Verificar las carpetas restantes
+    # 8. Log: Verificar las carpetas restantes
     - name: List remaining folders
       run: |
         echo "Carpetas restantes después de la eliminación:"
@@ -55,7 +62,7 @@ jobs:
         echo "Total de carpetas:"
         ls -1 ygopro-database/locales | wc -l
 
-    # 8. Subir las carpetas renombradas al repositorio de destino utilizando el token de acceso
+    # 9. Subir las carpetas renombradas al repositorio de destino utilizando el token de acceso
     - name: Push changes to koishi-languages repository
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -67,5 +74,6 @@ jobs:
         git checkout -b main # Crear la rama main si no existe
         git remote add origin https://$GH_TOKEN@github.com/evolutionygo/koishi-languages.git
         git add .
-        git commit -m "Upload renamed language folders"
+        git commit -m "Upload renamed language folders including Español EDO"
         git push -u origin main --force
+
