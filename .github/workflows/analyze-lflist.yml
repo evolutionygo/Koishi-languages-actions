@@ -45,7 +45,7 @@ jobs:
     - name: Remove other language folders
       run: |
         cd ygopro-database/locales
-        find . -type d -not -name "Español KS" -not -name "Ingles KS" -exec rm -rf {} +
+        find . -mindepth 1 -maxdepth 1 -type d -not -name "Español KS" -not -name "Ingles KS" -exec rm -rf {} +
 
     # 7. Log: Verificar las carpetas restantes
     - name: List remaining folders
@@ -66,3 +66,4 @@ jobs:
         git add .
         git commit -m "Upload renamed language folders"
         git push -f origin main
+
