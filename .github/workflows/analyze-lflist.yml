@@ -14,7 +14,7 @@ jobs:
     # 1. Clonar el repositorio con las carpetas de idiomas
     - name: Clone repository with language folders
       run: |
-        git clone https://github.com/mycard/ygopro-database/tree/master/locales
+        git clone https://github.com/mycard/ygopro-database/tree/master/locales.git
         cd language-repo
 
     # 2. Renombrar es-ES a Español KS
@@ -38,7 +38,7 @@ jobs:
         git config --global user.name "your-username"
         git config --global user.email "your-email"
         git init
-        git remote add origin https://github.com/evolutionygo/koishi-languages
+        git remote add origin https://github.com/evolutionygo/koishi-languages.git
         git add .
         git commit -m "Upload renamed language folders"
         git push -f origin main
