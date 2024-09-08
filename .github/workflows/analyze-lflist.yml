@@ -14,8 +14,8 @@ jobs:
     # 1. Clonar el repositorio con las carpetas de idiomas
     - name: Clone repository with language folders
       run: |
-        git clone https://github.com/mycard/ygopro-database/tree/master/locales.git
-        cd language-repo
+        git clone https://github.com/mycard/ygopro-database/tree/master/locales
+        cd locales
 
     # 2. Renombrar es-ES a Español KS
     - name: Rename es-ES to Español KS
