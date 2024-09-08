@@ -14,27 +14,27 @@ jobs:
     # 1. Clonar el repositorio con las carpetas de idiomas
     - name: Clone repository with language folders
       run: |
-        git clone https://github.com/mycard/ygopro-database/tree/master/locales
-        cd locales
+        git clone https://github.com/mycard/ygopro-database.git
+        cd ygopro-database/locales
 
     # 2. Renombrar es-ES a Español KS
     - name: Rename es-ES to Español KS
-      run: mv language-repo/es-ES language-repo/"Español KS"
+      run: mv ygopro-database/locales/es-ES ygopro-database/locales/"Español KS"
 
     # 3. Renombrar en-US a Ingles KS
     - name: Rename en-US to Ingles KS
-      run: mv language-repo/en-US language-repo/"Ingles KS"
+      run: mv ygopro-database/locales/en-US ygopro-database/locales/"Ingles KS"
 
     # 4. Eliminar otras carpetas de idiomas
     - name: Remove other language folders
       run: |
-        cd language-repo
-        find . -type d -not -name "Español KS" -not -name "Ingles KS" -not -name ".git" -not -name ".github" -exec rm -rf {} +
+        cd ygopro-database/locales
+        find . -type d -not -name "Español KS" -not -name "Ingles KS" -exec rm -rf {} +
 
-    # 5. Subir las carpetas renombradas a un nuevo repositorio
-    - name: Push changes to new repository
+    # 5. Subir las carpetas renombradas al repositorio de destino
+    - name: Push changes to koishi-languages repository
       run: |
-        cd language-repo
+        cd ygopro-database/locales
         git config --global user.name "your-username"
         git config --global user.email "your-email"
         git init
@@ -42,4 +42,5 @@ jobs:
         git add .
         git commit -m "Upload renamed language folders"
         git push -f origin main
+
 
