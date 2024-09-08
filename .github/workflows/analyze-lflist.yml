@@ -1,10 +1,11 @@
-name: Rename and Upload Language Folders
+name: Check for updates and Upload Language Folders
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'  # Verifica cada hora
 
 jobs:
   rename-folders:
@@ -15,54 +16,51 @@ jobs:
     - name: Clone repository with language folders
       run: |
         git clone https://github.com/mycard/ygopro-database.git
-        cd ygopro-database/locales
+        cd ygopro-database
+        git fetch
+        if [ "$(git rev-parse HEAD)" = "$(git rev-parse @{u})" ]; then
+          echo "No new commits in ygopro-database."
+          exit 0
+        fi
+        echo "New commits detected in ygopro-database."
 
-    # 2. Log: Listar todas las carpetas clonadas y su cantidad
-    - name: List folders before renaming
-      run: |
-        echo "Cantidad de carpetas antes de renombrar:"
-        ls ygopro-database/locales
-        echo "Total de carpetas:"
-        ls -1 ygopro-database/locales | wc -l
-
-    # 3. Renombrar es-ES a Español KS (sustituyendo Ñ por n)
-    - name: Rename es-ES to Español KS
-      run: mv ygopro-database/locales/es-ES ygopro-database/locales/"Español KS"
-
-    # 4. Renombrar en-US a Ingles KS
-    - name: Rename en-US to Ingles KS
-      run: mv ygopro-database/locales/en-US ygopro-database/locales/"Ingles KS"
-
-    # 5. Clonar el repositorio CDBEsp y copiar sus archivos a la nueva carpeta
-    - name: Clone CDBEsp repository and copy files
+    # 2. Clonar el repositorio CDBEsp
+    - name: Clone CDBEsp repository
       run: |
         git clone https://github.com/ryoken08/CDBEsp.git
-        mkdir -p ygopro-database/locales/"Español EDO"
-        cp -r CDBEsp/* ygopro-database/locales/"Español EDO"
+        cd CDBEsp
+        git fetch
+        if [ "$(git rev-parse HEAD)" = "$(git rev-parse @{u})" ]; then
+          echo "No new commits in CDBEsp."
+          exit 0
+        fi
+        echo "New commits detected in CDBEsp."
 
-    # 6. Log: Listar todas las carpetas después del renombrado y agregado de "Español EDO"
-    - name: List folders after renaming and adding Español EDO
+    # 3. Extraer el mensaje del commit más reciente
+    - name: Get latest commit message
+      id: commit-message
       run: |
-        echo "Cantidad de carpetas después de renombrar:"
-        ls ygopro-database/locales
-        echo "Total de carpetas:"
-        ls -1 ygopro-database/locales | wc -l
+        cd ygopro-database
+        commit_message=$(git log -1 --pretty=%B)
+        echo "::set-output name=message::$commit_message"
 
-    # 7. Eliminar otras carpetas de idiomas
+    # 4. Renombrar carpetas y copiar archivos como antes
+    - name: Rename and copy files
+      run: |
+        cd ygopro-database/locales
+        mv es-ES "Español KS"
+        mv en-US "Ingles KS"
+        git clone https://github.com/ryoken08/CDBEsp.git
+        mkdir -p "Español EDO"
+        cp -r CDBEsp/* "Español EDO"
+
+    # 5. Eliminar otras carpetas
     - name: Remove other language folders
       run: |
         cd ygopro-database/locales
         find . -mindepth 1 -maxdepth 1 -type d -not -name "Español KS" -not -name "Ingles KS" -not -name "Español EDO" -exec rm -rf {} +
 
-    # 8. Log: Verificar las carpetas restantes
-    - name: List remaining folders
-      run: |
-        echo "Carpetas restantes después de la eliminación:"
-        ls ygopro-database/locales
-        echo "Total de carpetas:"
-        ls -1 ygopro-database/locales | wc -l
-
-    # 9. Subir las carpetas renombradas al repositorio de destino utilizando el token de acceso
+    # 6. Subir cambios si hay commits nuevos utilizando el token de acceso
     - name: Push changes to koishi-languages repository
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -74,6 +72,6 @@ jobs:
         git checkout -b main # Crear la rama main si no existe
         git remote add origin https://$GH_TOKEN@github.com/evolutionygo/koishi-languages.git
         git add .
-        git commit -m "Upload renamed language folders including Español EDO"
+        git commit -m "${{ steps.commit-message.outputs.message }}"
         git push -u origin main --force
 
