@@ -17,21 +17,45 @@ jobs:
         git clone https://github.com/mycard/ygopro-database.git
         cd ygopro-database/locales
 
-    # 2. Renombrar es-ES a Español KS
+    # 2. Log: Listar todas las carpetas clonadas y su cantidad
+    - name: List folders before renaming
+      run: |
+        echo "Cantidad de carpetas antes de renombrar:"
+        ls ygopro-database/locales
+        echo "Total de carpetas:"
+        ls -1 ygopro-database/locales | wc -l
+
+    # 3. Renombrar es-ES a Español KS
     - name: Rename es-ES to Español KS
       run: mv ygopro-database/locales/es-ES ygopro-database/locales/"Español KS"
 
-    # 3. Renombrar en-US a Ingles KS
+    # 4. Renombrar en-US a Ingles KS
     - name: Rename en-US to Ingles KS
       run: mv ygopro-database/locales/en-US ygopro-database/locales/"Ingles KS"
 
-    # 4. Eliminar otras carpetas de idiomas
+    # 5. Log: Listar todas las carpetas después del renombrado
+    - name: List folders after renaming
+      run: |
+        echo "Cantidad de carpetas después de renombrar:"
+        ls ygopro-database/locales
+        echo "Total de carpetas:"
+        ls -1 ygopro-database/locales | wc -l
+
+    # 6. Eliminar otras carpetas de idiomas
     - name: Remove other language folders
       run: |
         cd ygopro-database/locales
         find . -type d -not -name "Español KS" -not -name "Ingles KS" -exec rm -rf {} +
 
-    # 5. Subir las carpetas renombradas al repositorio de destino
+    # 7. Log: Verificar las carpetas restantes
+    - name: List remaining folders
+      run: |
+        echo "Carpetas restantes después de la eliminación:"
+        ls ygopro-database/locales
+        echo "Total de carpetas:"
+        ls -1 ygopro-database/locales | wc -l
+
+    # 8. Subir las carpetas renombradas al repositorio de destino
     - name: Push changes to koishi-languages repository
       run: |
         cd ygopro-database/locales
@@ -42,5 +66,3 @@ jobs:
         git add .
         git commit -m "Upload renamed language folders"
         git push -f origin main
-
-
