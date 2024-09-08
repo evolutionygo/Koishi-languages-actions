@@ -11,13 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Clonar el repositorio con las carpetas de idiomas
+    # 1. Configurar UTF-8 para manejar nombres de carpetas con caracteres especiales
+    - name: Set UTF-8 locale
+      run: |
+        sudo update-locale LANG=en_US.UTF-8
+        export LANG=en_US.UTF-8
+
+    # 2. Clonar el repositorio con las carpetas de idiomas
     - name: Clone repository with language folders
       run: |
         git clone https://github.com/mycard/ygopro-database.git
         cd ygopro-database/locales
 
-    # 2. Log: Listar todas las carpetas clonadas y su cantidad
+    # 3. Log: Listar todas las carpetas clonadas y su cantidad
     - name: List folders before renaming
       run: |
         echo "Cantidad de carpetas antes de renombrar:"
@@ -25,15 +31,15 @@ jobs:
         echo "Total de carpetas:"
         ls -1 ygopro-database/locales | wc -l
 
-    # 3. Renombrar es-ES a Español KS
+    # 4. Renombrar es-ES a Español KS
     - name: Rename es-ES to Español KS
       run: mv ygopro-database/locales/es-ES ygopro-database/locales/"Español KS"
 
-    # 4. Renombrar en-US a Ingles KS
+    # 5. Renombrar en-US a Ingles KS
     - name: Rename en-US to Ingles KS
       run: mv ygopro-database/locales/en-US ygopro-database/locales/"Ingles KS"
 
-    # 5. Log: Listar todas las carpetas después del renombrado
+    # 6. Log: Listar todas las carpetas después del renombrado
     - name: List folders after renaming
       run: |
         echo "Cantidad de carpetas después de renombrar:"
@@ -41,13 +47,13 @@ jobs:
         echo "Total de carpetas:"
         ls -1 ygopro-database/locales | wc -l
 
-    # 6. Eliminar otras carpetas de idiomas
+    # 7. Eliminar otras carpetas de idiomas
     - name: Remove other language folders
       run: |
         cd ygopro-database/locales
         find . -mindepth 1 -maxdepth 1 -type d -not -name "Español KS" -not -name "Ingles KS" -exec rm -rf {} +
 
-    # 7. Log: Verificar las carpetas restantes
+    # 8. Log: Verificar las carpetas restantes
     - name: List remaining folders
       run: |
         echo "Carpetas restantes después de la eliminación:"
@@ -55,15 +61,16 @@ jobs:
         echo "Total de carpetas:"
         ls -1 ygopro-database/locales | wc -l
 
-    # 8. Subir las carpetas renombradas al repositorio de destino
+    # 9. Subir las carpetas renombradas al repositorio de destino
     - name: Push changes to koishi-languages repository
       run: |
         cd ygopro-database/locales
         git config --global user.name "your-username"
         git config --global user.email "your-email"
         git init
+        git checkout -b main # Crear la rama main si no existe
         git remote add origin https://github.com/evolutionygo/koishi-languages.git
         git add .
         git commit -m "Upload renamed language folders"
-        git push -f origin main
+        git push -u origin main --force
 
