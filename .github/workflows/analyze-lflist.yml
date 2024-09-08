@@ -55,17 +55,17 @@ jobs:
         echo "Total de carpetas:"
         ls -1 ygopro-database/locales | wc -l
 
-    # 8. Subir las carpetas renombradas al repositorio de destino
+    # 8. Subir las carpetas renombradas al repositorio de destino utilizando el token de acceso
     - name: Push changes to koishi-languages repository
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         cd ygopro-database/locales
-        git config --global user.name "your-username"
-        git config --global user.email "your-email"
+        git config --global user.name "Termo-Bot"
+        git config --global user.email "termobot@evolutionygo.com"
         git init
         git checkout -b main # Crear la rama main si no existe
-        git remote add origin https://github.com/evolutionygo/koishi-languages.git
+        git remote add origin https://$GH_TOKEN@github.com/evolutionygo/koishi-languages.git
         git add .
         git commit -m "Upload renamed language folders"
         git push -u origin main --force
-
-
