@@ -42,7 +42,7 @@ jobs:
       run: |
         cd ygopro-database
         commit_message=$(git log -1 --pretty=%B)
-        echo "message=$commit_message" >> $GH_TOKEN
+        echo "message=$commit_message" >> $GITHUB_ENV
 
     # 4. Renombrar carpetas y copiar archivos como antes
     - name: Rename and copy files
