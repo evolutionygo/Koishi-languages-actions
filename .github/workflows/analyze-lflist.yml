@@ -72,6 +72,6 @@ jobs:
         git checkout -b main # Crear la rama main si no existe
         git remote add origin https://$GH_TOKEN@github.com/evolutionygo/koishi-languages.git
         git add .
-        git commit -m "${{ steps.commit-message.outputs.message }}"
+        git commit -m "$message"
         git push -u origin main --force
 
