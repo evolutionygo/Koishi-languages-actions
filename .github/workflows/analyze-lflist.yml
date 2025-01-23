@@ -36,12 +36,11 @@ jobs:
         fi
         echo "New commits detected in CDBEsp."
 
-    # 3. Extraer el mensaje del commit más reciente
     - name: Get latest commit message
       id: commit-message
       run: |
         cd ygopro-database
-        commit_message=$(git log -1 --pretty=%B)
+        commit_message=$(git log -1 --pretty=%B | tr -d '\n' | tr -d '\r' | sed 's/[^a-zA-Z0-9 .,;-]/_/g')
         echo "message=$commit_message" >> $GITHUB_ENV
 
     # 4. Renombrar carpetas y copiar archivos como antes
